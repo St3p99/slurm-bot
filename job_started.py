@@ -2,7 +2,7 @@ import asyncio
 
 import argparse
 import os
-from slurm_bot import SlurmBot
+import slurm_bot
 
 CHAT_ID = os.environ.get('SLURM_BOT_CHAT_ID')
 
@@ -11,7 +11,7 @@ async def create_message(job_id, job_name):
         message_text = f"Job {job_id} has started."
     else:
         message_text = f"Job {job_id} ({job_name}) has started."
-    await SlurmBot.send_message_to_chat_id(message_text, CHAT_ID)
+    await slurm_bot.send_message_to_chat_id(message_text, CHAT_ID)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
