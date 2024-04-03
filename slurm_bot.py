@@ -28,7 +28,7 @@ logger = logging.getLogger(__name__)
 # define states
 TRACKING, CHOOSING, CHOOSE_JOB_TO_TRACK = range(3)
 
-LIST_OF_USERS = ["username"]
+LIST_OF_USERS = ["st3p99"]
 TOKEN = os.environ.get('SLURM_BOT_TOKEN') 
 
 # Decorator to restrict access to the bot
@@ -149,7 +149,7 @@ async def track_slurm_job(update: Update, context: ContextTypes.DEFAULT_TYPE) ->
     context.bot_data["tracking_job"] = job[0]
     context.bot_data["tracking_job_state"] = job[3]
 
-    context.job_queue.run_repeating(check_job_state, interval=300, chat_id=update.message.chat_id, name="tracking")
+    context.job_queue.run_repeating(check_job_state, interval=120, chat_id=update.message.chat_id, name="tracking")
     return TRACKING
 
 async def check_job_state(context):
@@ -165,12 +165,12 @@ async def check_job_state(context):
             message = f"Job {job_id} changed state from {job_state} to {new_state}"
             await send_message_to_chat_id(message, context.job.chat_id)
             if new_state == "COMPLETED" or new_state == "CANCELLED" or new_state == "FAILED":
-                context.job_queue.get_jobs_by_name("tracking")[0].schedule_removal()
-                await send_message_to_chat_id("/stop_tracking", context.job.chat_id)
+                await send_message_to_chat_id("Please: /stop_tracking", context.job.chat_id)
                 #TODO: find a way to execute /stop_tracking command from here
     else:
         logger.error("State not found")
         await send_message_to_chat_id("State not found", context.job.chat_id)
+        await send_message_to_chat_id("Please: /stop_tracking", context.job.chat_id)
 
     return
 
